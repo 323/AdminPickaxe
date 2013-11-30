@@ -207,26 +207,6 @@ local drawingTabGet									= "Off"
 local idloggingTabCol 								= blue
 local idloggingTabGet 								= "Off"	
 
---Aimbot--
-local nospreadTabGet 								= "Off"
-local nospreadTabCol 								= blue
-
-local norecoilTabGet 								= "Off"
-local norecoilTabCol 								= blue
-		
-local aimbottingTabCol 								= blue
-local aimbottingTabGet 								= "Off"
-
-local singleaimbotTabCol 							= blue
-local singleaimbotTabGet 							= "Off"	
-if ! asteamid then asteamid 						= "STEAM_ID_NOT_SET" 
-end
-
-local groupaimbotTabGet								= "X"
-local groupaimbotTabCol 							= white
-local gsteamid										= { }
-
-
 --Material--
 local Matinfo = {
 ["$basetexture"] = "models/debug/debugwhite",
@@ -292,10 +272,6 @@ if (not file.IsDir("AdminPickaxe/ESP", "Data"))
 then file.CreateDir("AdminPickaxe/ESP")
 end
 
-if (not file.IsDir("AdminPickaxe/Aimbot", "Data"))
-then file.CreateDir("AdminPickaxe/Aimbot")
-end
-
 if (not file.IsDir("AdminPickaxe/Detection", "Data"))
 then file.CreateDir("AdminPickaxe/Detection")
 end
@@ -306,10 +282,6 @@ end
 
 if (not file.Exists("AdminPickaxe/Detection/toggle.txt", "Data"))
 then file.Write("AdminPickaxe/Detection/toggle.txt", "true") 
-end
-
-if (not file.Exists("AdminPickaxe/Aimbot/button.txt", "Data"))
-then file.Write("AdminPickaxe/Aimbot/button.txt", " KEY_E") 
 end
 
 if (not file.Exists("AdminPickaxe/ESP/Entitys.txt", "Data"))
@@ -338,8 +310,6 @@ end
 if (not file.Exists("AdminPickaxe/Playlist/Name.txt", "Data"))
 then file.Write("AdminPickaxe/Playlist/Name.txt", "")
 end
-
-local aimbotbutton									= string.Explode(" ",(file.Read("AdminPickaxe/Aimbot/button.txt")))
 
 local Printers										= string.Explode(" ",(file.Read("AdminPickaxe/ESP/printers.txt")))
 
@@ -551,8 +521,6 @@ RemoveHook("ShouldDrawLocalPlayer", "derpdraw")
 RemoveHook("Think", "spam")
 RemoveHook("Think", "EFullbright")
 RemoveHook("Think", "godmode")
-RemoveHook("Think", "aimbot")
-RemoveHook("Think", "saimbot")
 RemoveHook("Think", "mousespam")
 
 --timers--
@@ -1465,231 +1433,6 @@ function ToggleDetect ()
 		ChatPrint("Detection Switched Off!", blue)		
 	end
 end
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-/*****************************
-Name: Aimbot
-Function: Create Aimbot functions
-*****************************/
-function Aimbot ()
-	if !aimbotting then
-		aimbotting = "norm"
-		aimbottingTabCol = green
-		aimbottingTabGet = " Normal"
-		ChatPrint("Manual Aimbot Turned on", blue)
-		hook.Add("Think", "aimbot", function()
-			for k,v in pairs(player.GetAll()) do
-				local position 	= (v:GetPos():ToScreen())
-				if v != ply and Visible(v) and v:Alive() and v:GetFriendStatus()!="friend" and input.IsKeyDown(KEY_F) then
-					local head = v:LookupBone("ValveBiped.Bip01_Head1")
-					local headpos,headang = v:GetBonePosition(head)
-					ply:SetEyeAngles((headpos+Vector(0,0,1) - ply:GetShootPos()):Angle())
-				end
-			end
-		end)
-		
-		hook.Add("HUDPaint", "aimbotangle", function()
-			if input.IsKeyDown(KEY_F) then
-				DrawOutlinedRect (blue, ScrW(), ScrH(), ScrW(), ScrH() )
-			end
-			for k,v in pairs(player.GetAll()) do
-				local position 	= (v:GetPos():ToScreen())
-				local head = v:LookupBone("ValveBiped.Bip01_Head1")
-				local headpos,headang = v:GetBonePosition(head)
-				local hposition = (headpos:ToScreen())
-				if v != ply and Visible(v) and v:GetFriendStatus()!="friend" and input.IsKeyDown(KEY_F) and v:Alive()  then
-					DrawOutlinedRect (green, hposition.x-5, hposition.y-5, 10, 10 )
-				end
-			end
-		end)		
-		
-	elseif aimbotting=="norm" then
-		aimbotting = "angl"
-		aimbottingTabCol = green
-		aimbottingTabGet = "Angle"	
-		ChatPrint("Angle Aimbot Turned on", blue)
-		hook.Remove("Think", "aimbot")
-		hook.Add("HUDPaint", "aimbotangle", function()
-			if input.IsKeyDown(KEY_F) then
-				DrawOutlinedRect (blue, ScrW()/4, ScrH()/4, ScrW()/2, ScrH()/2 )
-			end
-			for k,v in pairs(player.GetAll()) do
-				local position 	= (v:GetPos():ToScreen())
-				local head = v:LookupBone("ValveBiped.Bip01_Head1")
-				local headpos,headang = v:GetBonePosition(head)
-				local hposition = (headpos:ToScreen())
-				if v != ply and Visible(v) and v:GetFriendStatus()!="friend" and input.IsKeyDown(KEY_F) and v:Alive()  and hposition.x<ScrW()/1.3333333333 and hposition.x>ScrW()/4 and hposition.y<ScrH()/1.3333333333 and hposition.y>ScrH()/4 then
-					DrawOutlinedRect (green, hposition.x-5, hposition.y-5, 10, 10 )
-				end
-			end
-		end)
-		hook.Add("Think", "aimbot", function()
-			for k,v in pairs(player.GetAll()) do
-				local position 	= (v:GetPos():ToScreen())
-				local head = v:LookupBone("ValveBiped.Bip01_Head1")
-				local headpos,headang = v:GetBonePosition(head)
-				local hposition = (headpos:ToScreen())
-				if v != ply and Visible(v) and v:GetFriendStatus()!="friend" and input.IsKeyDown(KEY_F) and v:Alive()  and hposition.x<ScrW()/1.3333333333 and hposition.x>ScrW()/4 and hposition.y<ScrH()/1.3333333333 and hposition.y>ScrH()/4 then
-					local head = v:LookupBone("ValveBiped.Bip01_Head1")
-					local headpos,headang = v:GetBonePosition(head)
-					ply:SetEyeAngles((headpos+Vector(0,0,1) - ply:GetShootPos()):Angle())
-				end
-			end		
-		end)
-
-	elseif aimbotting then
-		aimbotting = false
-		aimbottingTabCol = blue
-		aimbottingTabGet = "Off"
-		hook.Remove("HUDPaint", "aimbotangle")
-		hook.Remove("Think", "aimbot")
-	end
-end
-
-function AngleAimbot ()
-	if !angleaimbot then
-		angleaimbot = true
-		aimbotting = "norm"
-		Aimbot ()
-	elseif angleaimbot then
-		angleaimbot = false
-		aimbotting = "angl"
-		Aimbot ()
-	end
-end
-
-function saimbot ()
-	hook.Add("Think", "saimbot", function ()
-		for k,v in pairs(player.GetAll()) do
-			local position = (v:GetPos():ToScreen())
-			if v:SteamID()==asteamid and Visible(v) and v:Alive() and input.IsKeyDown(KEY_F) then
-				local head = v:LookupBone("ValveBiped.Bip01_Head1")
-				local headpos,headang = v:GetBonePosition(head)
-				ply:SetEyeAngles((headpos+Vector(0,0,1) - ply:GetShootPos()):Angle())	
-			end
-		end
-	end)
-end
-
-function SingleAimbot ()
-	if !singleaimbot and !aimbotting then
-		singleaimbot = true
-		singleaimbotTabCol = green
-		singleaimbotTabGet = "On"
-		ChatPrint("Single Target Aimbot Turned On, Use with F. Set target with Console command: AdminPickaxe_SetATarget", blue)
-		saimbot ()
-	elseif !singleaimbot and aimbotting then
-		aimbotting = "angl"
-		Aimbot ()
-		singleaimbot = true
-		singleaimbotTabCol = green
-		singleaimbotTabGet = "On"
-		ChatPrint("Single Target Aimbot Turned On, Use with F. Set target with AdminPickaxe_SetATarget", blue)
-		saimbot ()
-	elseif singleaimbot then
-		singleaimbot = false
-		singleaimbotTabCol = blue
-		singleaimbotTabGet = "Off"		
-		hook.Remove("Think", "saimbot")
-	end
-	
-end
-
-function gaimbot ()
-	hook.Add("Think", "gaimbot", function()
-		for k,v in pairs(player.GetAll()) do
-			local position = (v:GetPos():ToScreen())
-			if table.HasValue(gsteamid,v:SteamID()) and Visible(v) and v:Alive() and input.IsKeyDown(KEY_F) then
-				local head = v:LookupBone("ValveBiped.Bip01_Head1")
-				local headpos,headang = v:GetBonePosition(head)
-				ply:SetEyeAngles((headpos+Vector(0,0,1) - ply:GetShootPos()):Angle())	
-			end
-		end
-	end)
-end
-
-function GroupAimbot ()
-	if !groupaimbot and !aimbotting then
-		groupaimbot = true
-		groupaimbotTabGet = "On"
-		groupaimbotTabCol = green
-		
-	elseif !groupaimbot and aimbotting then
-		aimbotting = "angl"
-		Aimbot()
-		groupaimbot = true
-		groupaimbotTabGet = "On"
-		groupaimbotTabCol = green
-		
-	elseif groupaimbot then
-		groupaimbot = false
-		groupaimbotTabGet = "Off"
-		groupaimbotTabCol = blue
-	end
-		
-end
-
-function SetbyView ()
-	trace = util.GetPlayerTrace( ply ) 
-	traceRes = util.TraceLine( trace ) 
-	if traceRes.HitNonWorld then 
-		target = traceRes.Entity 
-			if target:IsPlayer() and target != ply then 
-				asteamid = target:SteamID()
-				ChatPrint("Aimbot Target set to: "..target:GetName(), blue)
-			end
-	else
-	ChatPrint("Look at a player to target him!", blue)
-	end
-
-end
-
-
-function Norecoil()
-	if !norecoil then
-		norecoil = true
-		norecoilTabGet = "On"
-		norecoilTabCol = green
-		hook.Add("Think", "norecoil", function ()
-			if ply:GetActiveWeapon().Primary then
-				ply:GetActiveWeapon().Primary.Recoil = 0
-			end
-		end)
-	elseif norecoil then
-		norecoil = false
-		norecoilTabGet = "Off"
-		norecoilTabCol = blue
-			ply:GetActiveWeapon().Primary.Recoil = 10
-		hook.Remove("Think", "norecoil")
-	end
-end
-
-function Nospread()
-	if !nospread then
-		nospread = true
-		nospreadTabGet = "On"
-		nospreadTabCol = green
-		hook.Add("Think", "nospread", function ()
-			if ply:GetActiveWeapon().Primary then
-				ply:GetActiveWeapon().Primary.Cone = 0
-				ply:GetActiveWeapon().Primary.Spread = 0
-			end
-		end)
-	elseif nospread then
-		nospread = false
-		nospreadTabGet = "Off"
-		nospreadTabCol = blue
-		hook.Remove("Think", "nospread")
-			ply:GetActiveWeapon().Primary.Cone = 10
-			ply:GetActiveWeapon().Primary.Spread = 10
-	end
-end
-		
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
 /*****************************
 Name: Misc
@@ -2623,17 +2366,6 @@ DrawText ( showfriendsTabGet, 470, 215, showfriendsTabCol )
 
 end
 
-function Aimbotpaint ()
-
-DrawText ( aimbottingTabGet, 120, 110, aimbottingTabCol )
-DrawText ( singleaimbotTabGet, 120, 145, singleaimbotTabCol )
-DrawText ( groupaimbotTabGet, 120, 180, groupaimbotTabCol )
-
-DrawText ( norecoilTabGet, 295, 110, norecoilTabCol )
-DrawText ( nospreadTabGet, 295, 145, nospreadTabCol )
-
-end
-
 function Miscpaint ()
 
 DrawText ( flashspammingTabGet, 120, 110, flashspammingTabCol )
@@ -2673,8 +2405,8 @@ DrawLine ( 675, 250, 675, 600 )
 DrawOutlinedText ( "A script coded by TerrorErrorIst and Pope Faggotini I", "Logo", InfoFrame:GetWide()/2, 85, blue, 1, black )
 DrawOutlinedText ( "----Cblueits to Pope Faggotini I for the idea----", "Menu", InfoFrame:GetWide()/2, InfoFrame:GetTall()-25, blue, 1, black )
 DrawOutlinedText ( "About", "Logo", InfoFrame:GetWide()/2, 125, blue, 1, black )
-DrawOutlinedText ( "This script was made by KEK", "Menu", InfoFrame:GetWide()/2, 150, blue, 1, black )
-DrawOutlinedText ( "A Garry's Mod Team", "Menu", InfoFrame:GetWide()/2, 170, blue, 1, black )
+DrawOutlinedText ( "This script was made by LemonParty", "Menu", InfoFrame:GetWide()/2, 150, blue, 1, black )
+DrawOutlinedText ( "A Garry's Mod Coding Team", "Menu", InfoFrame:GetWide()/2, 170, blue, 1, black )
 DrawOutlinedText ( "Commands", "Logo", InfoFrame:GetWide()/2, 230, blue, 1, black )
 DrawOutlinedText ( "AdminPickaxe_Boost1  ", "Menu", InfoFrame:GetWide()/2, 260, blue, 1, black )
 DrawOutlinedText ( "AdminPickaxe_Boost2  ", "Menu", InfoFrame:GetWide()/2, 280, blue, 1, black )
@@ -2859,7 +2591,7 @@ DrawRoundedBoxEx ( 0, 0, 40, Frame:GetWide(), 10, ttblue, false, false, false, f
 DrawRoundedBox ( 0, 0, 0, Frame:GetWide(), Frame:GetTall(), tblack )
 DrawRoundedBox ( 0, 0, 0, 450, 20, tblue )
 DrawOutlinedRect (blue, 0, 0, Frame:GetWide(), Frame:GetTall() )
-DrawOutlinedText ( "AdminPickaxe v1.0", "Logo", Frame:GetWide()/2, 10, blue, 1.5, black )
+DrawOutlinedText ( "AdminPickaxe v1.1", "Logo", Frame:GetWide()/2, 10, blue, 1.5, black )
 end
 Frame:MakePopup()
 CreateButton 	( "X", Frame, black, tblack, true, 450, -30, 50, 50, "Close", function () Frame:Close() end )
@@ -2909,20 +2641,6 @@ ESPpaint ()
 DrawOutlinedText ( "Coded by TerrorErrorIst idea by Pope Faggotini I", "Small", Frame:GetWide()-106, Frame:GetTall()-27, blue, 1, black )
 end
 
-local Aimbottab = vgui.Create("DLabel")
-Aimbottab:SetParent( Frame )
-Aimbottab:SetPos( 0 , 20 )
-Aimbottab:SetSize( Frame:GetWide(), Frame:GetTall()-20 )
-Aimbottab:SetText("")
-Aimbottab:SetVisible( false )
-Aimbottab.Paint = function()
-DrawRoundedBoxEx ( 0, 300, 0, 100, 20, ttblue, false, false, false, false )
-
-Aimbotpaint ()
-
-DrawOutlinedText ( "Coded by TerrorErrorIst idea by Pope Faggotini I", "Small", Frame:GetWide()-106, Frame:GetTall()-27, blue, 1, black )
-end
-
 local MISCtab = vgui.Create("DLabel")
 MISCtab:SetParent( Frame )
 MISCtab:SetPos( 0 , 20 )
@@ -2930,7 +2648,7 @@ MISCtab:SetSize( Frame:GetWide(), Frame:GetTall()-20 )
 MISCtab:SetText("")
 MISCtab:SetVisible( false )
 MISCtab.Paint = function()
-DrawRoundedBoxEx ( 0, 400, 0, 100, 20, ttblue, false, false, false, false )
+DrawRoundedBoxEx ( 0, 300, 0, 100, 20, ttblue, false, false, false, false )
 
 Miscpaint ()
 
@@ -2942,7 +2660,6 @@ function ChangeTab (tab)
 Maintab:SetVisible(false)
 HUDtab:SetVisible(false)
 ESPtab:SetVisible(false)
-Aimbottab:SetVisible(false)
 MISCtab:SetVisible(false)
 tab:SetVisible(true)
 end
@@ -2950,8 +2667,7 @@ end
 CreateButton 	( "Main", Frame, black, tblack, true, 0, 20, 100, 20, "Main Tab", function () ChangeTab(Maintab)   end )
 CreateButton 	( "HUD", Frame, black, tblack, true, 100, 20, 100, 20, "HUD Options", function () ChangeTab(HUDtab)  end )
 CreateButton 	( "ESP", Frame, black, tblack, true, 200, 20, 100, 20, "ESP Options", function () ChangeTab(ESPtab)  end )
-CreateButton 	( "Aimbot", Frame, black, tblack, true, 300, 20, 100, 20, "Logging Options", function () ChangeTab(Aimbottab)  end )
-CreateButton 	( "Misc", Frame, black, tblack, true, 400, 20, 100, 20, "Misc Options", function () ChangeTab(MISCtab)  end )
+CreateButton 	( "Misc", Frame, black, tblack, true, 300, 20, 100, 20, "Misc Options", function () ChangeTab(MISCtab)  end )
 
 
 --== Adding Tab buttons ==--
@@ -3001,19 +2717,6 @@ CreateButton 	( "UserGroups", ESPtab, black, tblack, true, 180, 205, 95, 20, "To
 CreateButton 	( "Beams", ESPtab, black, tblack, true, 355, 135, 95, 20, "Toggle ESP to draw beams", function () Beams ()  end )
 CreateButton 	( "Special Only", ESPtab, black, tblack, true, 355, 170, 95, 20, "Toggle ESP to only target Admins/friends", function () SpecialOnly ()  end )
 CreateButton 	( "Friends", ESPtab, black, tblack, true, 355, 205, 95, 20, "Toggle Crosshair", function () ShowFriends ()  end )
-
---AimbotTab--
-CreateButton 	( "Aimbot", Aimbottab, black, tblack, true, 5, 100, 95, 20, "Toggle Normal Aimbot, Targets visible players.", function () Aimbot ()  end )
-CreateButton 	( "S Aimbot", Aimbottab, black, tblack, true, 5, 135, 95, 20, "Toggle Singe Target Aimbot, Targets one selected player.", function () SingleAimbot ()  end )
-CreateButton 	( "G Aimbot", Aimbottab, black, tblack, true, 5, 170, 95, 20, "Toggle Group Target Aimbot, Targets multiple selected players.", function () NotDone () end )
-
-CreateButton 	( "NoRecoil", Aimbottab, black, tblack, true, 180, 100, 95, 20, "button", function () Norecoil () end )
-CreateButton 	( "NoSpread", Aimbottab, black, tblack, true, 180, 135, 95, 20, "button", function () Nospread () end )
-CreateButton 	( "button", Aimbottab, black, tblack, true, 180, 170, 95, 20, "button", function ()  end )
-
-CreateButton 	( "button", Aimbottab, black, tblack, true, 355, 100, 95, 20, "button", function ()  end )
-CreateButton 	( "button", Aimbottab, black, tblack, true, 355, 135, 95, 20, "button", function ()  end )
-CreateButton 	( "button", Aimbottab, black, tblack, true, 355, 170, 95, 20, "button", function ()  end )
 
 --MiscTab--
 CreateButton 	( "Flash Spam", MISCtab, black, tblack, true, 5, 100, 95, 20, "Toggle Flashlight Spammer", function () FlashlightSpam ()  end )
@@ -3119,7 +2822,6 @@ NewCom ( "AdminPickaxe_Derp", Derp )
 
 NewCom ( "AdminPickaxe_SetATarget", SetbyView )
 NewCom ( "AdminPickaxe_Xray", Xray )
-NewCom ( "AdminPickaxe_Aimbot", AngleAimbot )
 NewCom ( "AdminPickaxe_DrawLogo", Drawlogo )
 NewCom ( "AdminPickaxe_GetEntAmount", GetEntAmount )
 NewCom ( "AdminPickaxe_GetPlayers", PrintPlayers )
