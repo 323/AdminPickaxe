@@ -250,8 +250,8 @@ surface.CreateFont("Small",{font = "Arial", size = 12, weight = 200, antialias =
 surface.CreateFont("ESP",{font = "Fixedsys", size = 12, weight = 200, antialias = 0})
 surface.CreateFont("Logo",{font = "Tahoma", size = 20, weight = 100000, antialias = 0})
 surface.CreateFont("Playlist",{font = "Tahoma", size = 15, weight = 100000, antialias = 0})
-surface.CreateFont("HUDLogo",{font = "Ravie", size = 40, weight = 100000, antialias = 0})
-surface.CreateFont("Infotab",{font = "Ravie", size = 75, weight = 100000, antialias = 0})
+surface.CreateFont("HUDLogo",{font = "Tahoma", size = 40, weight = 100000, antialias = 0})
+surface.CreateFont("Infotab",{font = "Tahoma", size = 75, weight = 100000, antialias = 0})
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Print ( "Fonts Created" )
@@ -2591,7 +2591,7 @@ DrawRoundedBoxEx ( 0, 0, 40, Frame:GetWide(), 10, ttblue, false, false, false, f
 DrawRoundedBox ( 0, 0, 0, Frame:GetWide(), Frame:GetTall(), tblack )
 DrawRoundedBox ( 0, 0, 0, 450, 20, tblue )
 DrawOutlinedRect (blue, 0, 0, Frame:GetWide(), Frame:GetTall() )
-DrawOutlinedText ( "AdminPickaxe v1.1", "Logo", Frame:GetWide()/2, 10, blue, 1.5, black )
+DrawOutlinedText ( "AdminPickaxe v1.2", "Logo", Frame:GetWide()/2, 10, blue, 1.5, black )
 end
 Frame:MakePopup()
 CreateButton 	( "X", Frame, black, tblack, true, 450, -30, 50, 50, "Close", function () Frame:Close() end )
